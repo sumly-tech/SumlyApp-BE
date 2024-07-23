@@ -6,6 +6,7 @@ var fs = require('fs')
 module.exports = {
     signup: async (req, res) => {
         var body = Helper.sanitizeInput(req.body);
+        console.log('body: ',body);
         var fname = Helper.sanitizeInput(body.fname);
         var preferredName = Helper.sanitizeInput(body.preferred_name);
         var lname = Helper.sanitizeInput(body.lname);
@@ -35,7 +36,7 @@ module.exports = {
         var expenses_track_mode_other = Helper.sanitizeInput(body.expenses_track_mode_other);
         
 
-        if (fname && lname && save_reason && occpation && employee_type && is_incorporated && business_structure && employement_type && last_year_income && salary_deposit_mode && tax_fill_type && has_dependent && primary_state && city && is_working_in_other_state && has_separate_business_bank_account && expenses_track_mode && email && password) {
+        if (fname && lname && save_reason && occpation && employee_type && is_incorporated && business_structure && employement_type && last_year_income && salary_deposit_mode && tax_fill_type && has_dependent && primary_state && city && is_working_in_other_state && has_separate_business_bank_account && expenses_track_mode) {
 
             var uid = Helper.generateUid();
             var currentDate = Helper.currentDatetime();
@@ -44,7 +45,7 @@ module.exports = {
                 fname: fname,
                 lname: lname,
                 email: email,
-                password: Helper.encryptPassword(password),
+                password: password ? Helper.encryptPassword(password) : null,
                 save_reason: save_reason,
                 dob: dob,
                 preferred_name: preferredName,
@@ -55,7 +56,7 @@ module.exports = {
                 business_structure_other: business_structure_other,
                 employement_type: employement_type,
                 last_year_income: last_year_income,
-                salary_deposit_mode: salary_deposit_mode,
+                salary_deposit_mode: salary_deposit_mode ? salary_deposit_mode.join(',') : null,
                 tax_fill_type: tax_fill_type,
                 has_dependent: has_dependent == 'yes' ? 1 : 0,
                 dependent_value: dependent_value,
@@ -79,6 +80,7 @@ module.exports = {
                     }
                 }));
             }).catch(e => {
+                console.log('error: ',e);
                 Helper.addLog(`User signup: ${e}`);
                 res.json(Helper.apiResponse({
                     status: 0,
